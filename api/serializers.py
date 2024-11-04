@@ -14,3 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+
+class MessageSerializer(serializers.Serializer):
+    message = serializers.CharField()

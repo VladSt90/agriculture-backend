@@ -57,7 +57,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Description of your API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-    # Additional settings as needed
+     'COMPONENT_SPLIT_REQUEST': True
 }
 
 MIDDLEWARE = [

@@ -4,20 +4,23 @@ import zipfile
 
 from django.shortcuts import get_object_or_404
 from django.utils.html import escape
-from rest_framework import status
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
+from ..serializers import MessageSerializer
 from .models import ImageSet
-from .serializers import ImageSetSerializer
+from .serializers import CreateImageSetSerializer, ImageSetSerializer
 from .services.images_storage_service import get_image_storage_service
 
 
-class ListImageSetsView(APIView):
+class ListImageSetsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ImageSetSerializer
 
-    def get(self, request):
+    def list(self, request):
         """Returns a list of all ImageSets belonging to the authenticated user."""
         user = request.user
         imagesets = user.image_sets.all()
@@ -25,9 +28,11 @@ class ListImageSetsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CreateImageSetView(APIView):
+class CreateImageSetView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CreateImageSetSerializer
 
+    @extend_schema(request=CreateImageSetSerializer, responses=ImageSetSerializer)
     def post(self, request):
         """Creates a new ImageSet for the authenticated user."""
         user = request.user
@@ -60,20 +65,21 @@ class CreateImageSetView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ViewImageSetView(APIView):
+class ViewImageSetView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ImageSetSerializer
 
-    def get(self, request, imageset_id):
+    def retrieve(self, request, imageset_id):
         """Returns details of a specific ImageSet if it belongs to the authenticated user."""
         user = request.user
         imageset = get_object_or_404(user.image_sets, id=imageset_id)
-        storage = get_image_storage_service(user_id=user.id, imageset_id=imageset.id)
         serializer = ImageSetSerializer(imageset)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ProcessImageSetView(APIView):
+class ProcessImageSetView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MessageSerializer
 
     def post(self, request, imageset_id):
         """Starts processing an ImageSet if it belongs to the authenticated user."""
