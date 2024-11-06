@@ -4,8 +4,7 @@ import zipfile
 
 from django.shortcuts import get_object_or_404
 from django.utils.html import escape
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +13,7 @@ from ..serializers import MessageSerializer
 from .models import ImageSet
 from .serializers import CreateImageSetSerializer, ImageSetSerializer
 from .services.images_storage_service import get_image_storage_service
+from .tasks import process_imageset
 
 
 class ListImageSetsView(generics.ListAPIView):
@@ -64,11 +64,10 @@ class CreateImageSetView(generics.GenericAPIView):
         serializer = ImageSetSerializer(imageset)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
 class ViewImageSetView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ImageSetSerializer
-
+    
     def retrieve(self, request, imageset_id):
         """Returns details of a specific ImageSet if it belongs to the authenticated user."""
         user = request.user
@@ -76,15 +75,15 @@ class ViewImageSetView(generics.RetrieveAPIView):
         serializer = ImageSetSerializer(imageset)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class ProcessImageSetView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
 
+    @extend_schema(request=None)
     def post(self, request, imageset_id):
         """Starts processing an ImageSet if it belongs to the authenticated user."""
         user = request.user
         imageset = get_object_or_404(user.image_sets, id=imageset_id)
         # Logic to start processing the ImageSet asynchronously using Celery
-        # process_imageset_task.delay(imageset_id=imageset.id)
+        process_imageset.delay(imageset_id=imageset.id)
         return Response({"message": "Processing started."}, status=status.HTTP_202_ACCEPTED)

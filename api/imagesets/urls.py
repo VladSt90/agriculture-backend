@@ -10,6 +10,6 @@ from .views import (
 urlpatterns = [
     path('', ListImageSetsView.as_view(), name='list_imagesets'),
     path('create/', CreateImageSetView.as_view(), name='create_imageset'),
-    path('<int:imageset_id>/', ViewImageSetView.as_view(), name='view_imageset'),
-    path('<int:imageset_id>/process/', ProcessImageSetView.as_view(), name='process_imageset'),
+    path('<uuid:imageset_id>/', ViewImageSetView.as_view(), name='view_imageset'),
+    path('<uuid:imageset_id>/process/', ProcessImageSetView.as_view(), name='process_imageset'),
 ]
