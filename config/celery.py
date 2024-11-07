@@ -27,8 +27,8 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 logger.info("Celery app initialized!")
 
 # Enable debugging if environment variable is set
-if os.environ.get("ENABLE_DEBUGGER", "0") == "1":
-    logger.info("Starting debugger...")
-    debugpy.listen(("0.0.0.0", 5678))  # Expose debug port for remote debugging
-    debugpy.wait_for_client()  # Pause execution until debugger attaches
-    logger.info("Debugger attached.")
+# if os.environ.get("ENABLE_DEBUGGER", "0") == "1":
+#     logger.info("Starting debugger...")
+#     debugpy.listen(("0.0.0.0", 5678))  # Expose debug port for remote debugging
+#     debugpy.wait_for_client()  # Pause execution until debugger attaches
+#     logger.info("Debugger attached.")

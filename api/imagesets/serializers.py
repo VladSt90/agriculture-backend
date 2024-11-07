@@ -15,16 +15,28 @@ class ImageSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ImageSet
-        fields = ['id', 'title', 'created_at', 'status', 'images']
+        fields = ["id", "title", "created_at", "status", "images"]
 
     @extend_schema_field(serializers.ListSerializer(child=ImageFileSerializer()))
     def get_images(self, obj):
         storage = get_image_storage_service(user_id=obj.owner.id, imageset_id=obj.id)
         images = storage.get_images()
-        return [{
-            "url": img.location,
-            "ml_result": obj.ml_processing_result.get(img.file_name) if obj.ml_processing_result else None
-        } for img in images]
+
+        ml_results = obj.ml_processing_result
+
+        result_dict = {
+            item["filename"]: item["processing_result"] for item in ml_results
+        }
+
+        return [
+            {
+                "url": img.location,
+                "ml_result": (
+                    result_dict.get(img.file_name) if obj.ml_processing_result else None
+                ),
+            }
+            for img in images
+        ]
 
 
 class CreateImageSetSerializer(serializers.Serializer):
@@ -32,4 +44,4 @@ class CreateImageSetSerializer(serializers.Serializer):
     zip_file = serializers.FileField()
 
     class Meta:
-        fields = ['title', 'zip_file']
+        fields = ["title", "zip_file"]

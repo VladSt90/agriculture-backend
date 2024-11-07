@@ -21,6 +21,9 @@ services:
     working_dir: /app
     ports:
       - "8000:8000"
+      - "5678:5678"  # Expose debugpy port for VS Code
+    environment:
+      - ENABLE_DEBUGGER=1
 
   celery_worker:
     build:
@@ -38,8 +41,8 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0  # Set broker URL
       - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Set result backend
       # - ENABLE_DEBUGGER=1  # Enable debugger in container
-    ports:
-      - "5678:5678"  # Map debug port for VS Code
+    # ports:
+      # - "5678:5678"  # Map debug port for VS Code
     depends_on:
       - redis
 
