@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"  # Expose Nginx on port 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Use custom Nginx configuration
+      - ./ImageSets:/var/www/imagesets  # Serve images from this folder
+    depends_on:
+      - django_server
   django_server:
     build:
       context: .
