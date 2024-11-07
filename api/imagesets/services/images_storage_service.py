@@ -56,7 +56,7 @@ class FileSystemImagesStorage(ImagesStorageService):
 
     def get_images(self):
         """Returns a list of Image objects for all images in the storage directory."""
-        images = []
+        images: list[Image] = []
         for filename in os.listdir(self.storage_directory):
             if filename.endswith(('.png', '.jpg', '.jpeg')):
                 location = os.path.join(self.storage_directory, filename)

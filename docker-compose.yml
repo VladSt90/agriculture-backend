@@ -1,12 +1,39 @@
 version: '3.8'
 
 services:
+  django_server:
+    build:
+      context: .
+      dockerfile: Dockerfile-django
+    container_name: django_server
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery-worker
+    command: >
+      python -Xfrozen_modules=off
+      -m celery
+      -A config
+      worker --loglevel=info
+    container_name: celery_worker
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Set broker URL
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Set result backend
+      # - ENABLE_DEBUGGER=1  # Enable debugger in container
+    ports:
+      - "5678:5678"  # Map debug port for VS Code
+    depends_on:
+      - redis
+
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
-
-volumes:
-  redis_data:

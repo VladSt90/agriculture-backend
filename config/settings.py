@@ -58,16 +58,13 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Description of your API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-     'COMPONENT_SPLIT_REQUEST': True
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Set access token lifetime
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Set refresh token lifetime
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Set access token lifetime
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Set refresh token lifetime
 }
-
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -152,5 +149,33 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        },
+    },
+    "loggers": {
+        "celery": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "config.celery": {  # Logger for your celery.py
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
