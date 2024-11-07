@@ -11,6 +11,7 @@ const ImageSetPage: React.FC = () => {
   const [imageSet, setImageSet] = useState<ImageSet | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchImageSet = async () => {
@@ -29,6 +30,14 @@ const ImageSetPage: React.FC = () => {
     fetchImageSet();
   }, [imagesetId, apiService]);
 
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <div className="imageset-page">
       {loading && <p>Loading...</p>}
@@ -43,7 +52,13 @@ const ImageSetPage: React.FC = () => {
               <p>No images available for this image set.</p>
             ) : (
               imageSet.images.map((image, index) => (
-                <div key={index} className="image-container">
+                <div
+                  key={index}
+                  className="image-container"
+                  onClick={() =>
+                    handleImageClick(`http://localhost/images/${image.url}`)
+                  }
+                >
                   <img
                     src={`http://localhost/images/${image.url}`}
                     alt={`Image ${index + 1}`}
@@ -52,6 +67,17 @@ const ImageSetPage: React.FC = () => {
                 </div>
               ))
             )}
+          </div>
+        </div>
+      )}
+
+      {selectedImage && (
+        <div className="modal" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-button" onClick={handleCloseModal}>
+              &times;
+            </span>
+            <img src={selectedImage} alt="Selected" className="modal-image" />
           </div>
         </div>
       )}
