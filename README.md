@@ -1,7 +1,3 @@
-Here’s the updated **README** with your repository URL:
-
----
-
 # Backend API for Image Processing
 
 This repository contains the backend API for an image processing application. The backend is built using **Django** and **Django REST Framework** and leverages **Celery** for asynchronous task processing. The API integrates with a machine learning model for image object detection and processing.
@@ -59,7 +55,3 @@ Check Swagger doc at /api/schema/swagger-ui/#/
 
 - **Author**: Vladislav Stukov  
 - **GitHub**: [VladSt90](https://github.com/VladSt90)  
-
----
-
-This README is now updated with your GitHub repository URL.
